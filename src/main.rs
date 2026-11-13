@@ -18,6 +18,7 @@ i18n!("locales", fallback = "en");
 fn main() {
     app::paths::move_legacy_folders();
     app::locale::use_system_language();
+    setup_mode::components::add_whisper_gpu_runtime_to_dll_path();
 
     application().run(|cx| {
         init(cx);

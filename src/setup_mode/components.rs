@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::app::paths::path_setting;
 use crate::setup_mode::archive;
 use crate::setup_mode::download::download;
 use crate::setup_mode::ollama;
@@ -27,6 +28,7 @@ mod platform {
     };
     pub const OLLAMA_EXTRACTOR: Extractor = archive::extract_tar_zst;
     pub const OLLAMA_GPU_RUNTIME: Option<PinnedFile> = None;
+    pub const WHISPER_GPU_RUNTIME: &[PinnedFile] = &[];
 
     pub const VOICEVOX: PinnedFile = PinnedFile {
         url: "https://github.com/VOICEVOX/voicevox_engine/releases/download/0.26.1/voicevox_engine-linux-cpu-x64-0.26.1.7z.001",
@@ -59,6 +61,21 @@ mod platform {
     });
     #[cfg(not(feature = "vulkan"))]
     pub const OLLAMA_GPU_RUNTIME: Option<PinnedFile> = None;
+
+    // Must match the CUDA version the release is built with (see the Windows workflow).
+    #[cfg(feature = "cuda")]
+    pub const WHISPER_GPU_RUNTIME: &[PinnedFile] = &[
+        PinnedFile {
+            url: "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/windows-x86_64/cuda_cudart-windows-x86_64-12.9.79-archive.zip",
+            sha256: "179e9c43b0735ffe67207b3da556eb5a0c50f3047961882b7657d3b822d34ef8",
+        },
+        PinnedFile {
+            url: "https://developer.download.nvidia.com/compute/cuda/redist/libcublas/windows-x86_64/libcublas-windows-x86_64-12.9.1.4-archive.zip",
+            sha256: "d534d98b0b453a98914dbf3adf47d7e84b55037abf02f87466439e1dcef581ed",
+        },
+    ];
+    #[cfg(not(feature = "cuda"))]
+    pub const WHISPER_GPU_RUNTIME: &[PinnedFile] = &[];
 
     pub const VOICEVOX: PinnedFile = PinnedFile {
         url: "https://github.com/VOICEVOX/voicevox_engine/releases/download/0.26.1/voicevox_engine-windows-cpu-0.26.1.7z.001",
@@ -140,7 +157,8 @@ impl Component {
         let key = match self {
             Component::Ollama => "size.ollama",
             Component::TranslationModel => return TranslationModel::selected().download_size(),
-            Component::Whisper => "size.whisper",
+            Component::Whisper if platform::WHISPER_GPU_RUNTIME.is_empty() => "size.whisper",
+            Component::Whisper => "size.whisper_cuda",
             Component::Voicevox => "size.voicevox",
             Component::Piper => "size.piper",
         };
@@ -159,7 +177,7 @@ impl Component {
                 ollama::is_running()
                     && ollama::has_model(TranslationModel::selected().ollama_name())
             }
-            Component::Whisper => whisper_model_path().exists(),
+            Component::Whisper => whisper_model_path().exists() && whisper_gpu_runtime_installed(),
             Component::Voicevox => voicevox::is_installed(),
             Component::Piper => piper_bin_path().exists() && piper_voice_path().exists(),
         }
@@ -238,13 +256,54 @@ fn install_translation_model(report: &mut dyn FnMut(Step)) -> Result<(), String>
     Ok(())
 }
 
+fn whisper_gpu_dll_folder(file: &PinnedFile) -> PathBuf {
+    let archive_name = file.url.rsplit('/').next().unwrap_or_default().trim_end_matches(".zip");
+
+    whisper_gpu_runtime_dir().join(archive_name).join("bin")
+}
+
+fn whisper_gpu_runtime_dir() -> PathBuf {
+    path_setting("WHISPER_GPU_RUNTIME", "whisper/gpu-runtime")
+}
+
+pub fn whisper_gpu_runtime_installed() -> bool {
+    platform::WHISPER_GPU_RUNTIME
+        .iter()
+        .all(|file| whisper_gpu_dll_folder(file).exists())
+}
+
+/// Lets Windows find the delay-loaded CUDA DLLs (see build.rs) once they are installed.
+/// Must run before any other thread starts, as it changes the environment.
+pub fn add_whisper_gpu_runtime_to_dll_path() {
+    if platform::WHISPER_GPU_RUNTIME.is_empty() {
+        return;
+    }
+
+    let folders = platform::WHISPER_GPU_RUNTIME.iter().map(whisper_gpu_dll_folder);
+    let current = std::env::var_os("PATH").unwrap_or_default();
+
+    if let Ok(path) = std::env::join_paths(folders.chain(std::env::split_paths(&current))) {
+        // SAFETY: called from main before the app spawns threads.
+        unsafe { std::env::set_var("PATH", path) };
+    }
+}
+
 fn install_whisper(report: &mut dyn FnMut(Step)) -> Result<(), String> {
-    download(
-        WHISPER_MODEL.url,
-        WHISPER_MODEL.sha256,
-        &whisper_model_path(),
-        &mut |fraction| report(Step::Downloading(fraction)),
-    )
+    let model = whisper_model_path();
+
+    if !model.exists() {
+        download(WHISPER_MODEL.url, WHISPER_MODEL.sha256, &model, &mut |fraction| {
+            report(Step::Downloading(fraction))
+        })?;
+    }
+
+    for file in platform::WHISPER_GPU_RUNTIME {
+        if !whisper_gpu_dll_folder(file).exists() {
+            install_archive(file, &whisper_gpu_runtime_dir(), archive::extract_zip, report)?;
+        }
+    }
+
+    Ok(())
 }
 
 fn install_voicevox(report: &mut dyn FnMut(Step)) -> Result<(), String> {

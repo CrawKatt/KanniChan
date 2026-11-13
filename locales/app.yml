@@ -191,6 +191,10 @@ size.whisper:
   en: "570 MB"
   es: "570 MB"
   ja: "570 MB"
+size.whisper_cuda:
+  en: "1.1 GB"
+  es: "1,1 GB"
+  ja: "1.1 GB"
 size.voicevox:
   en: "1.9 GB"
   es: "1,9 GB"
@@ -445,6 +449,10 @@ error.audio_invalid:
   en: "The generated audio is not valid: %{error}"
   es: "El audio generado no es válido: %{error}"
   ja: "生成された音声が無効です: %{error}"
+error.whisper_gpu_runtime_missing:
+  en: "NVIDIA's CUDA runtime is missing. Install Whisper from Settings."
+  es: "Falta el runtime CUDA de NVIDIA. Instala Whisper desde Ajustes."
+  ja: "NVIDIAのCUDAランタイムがありません。設定からWhisperをインストールしてください。"
 error.whisper_load:
   en: "Could not load Whisper from %{path}: %{error}"
   es: "No se pudo cargar Whisper desde %{path}: %{error}"
