@@ -1,0 +1,28 @@
+[package]
+name = "kannichan"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cpal = "0.18"
+flate2 = "1"
+gpui-kit = "0.9.0"
+lindera = { version = "6", features = ["embed-ipadic"] }
+rodio = { version = "0.23", default-features = false, features = ["playback", "wav"] }
+rust-i18n = "4.2.4"
+serde_json = "1"
+sevenz-rust2 = "0.24"
+sha2 = "0.10"
+sys-locale = "0.3.2"
+tar = "0.4"
+ureq = { version = "3", features = ["json"] }
+whisper-rs = "0.16"
+zip = { version = "9.4.1", default-features = false, features = ["deflate"] }
+zstd = "0.14.3"
+
+[features]
+default = ["cuda"]
+# Whisper on NVIDIA GPUs. Build with --no-default-features on machines without CUDA.
+cuda = ["whisper-rs/cuda"]
+# Whisper on AMD (or any Vulkan) GPUs; the Windows installer also adds Ollama's ROCm runtime.
+vulkan = ["whisper-rs/vulkan"]

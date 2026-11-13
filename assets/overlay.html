@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>KanniChan</title>
+<style>
+  /* Transparent so OBS draws only the letters over the stream. */
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 4vw 6vh;
+    box-sizing: border-box;
+    font-family: "Noto Serif CJK JP", "Yu Mincho", serif;
+    color: #FFFFFF;
+    text-align: center;
+    /* A dark outline keeps the text readable over any game or camera. */
+    text-shadow:
+      -2px -2px 0 #1F1B18, 2px -2px 0 #1F1B18,
+      -2px 2px 0 #1F1B18, 2px 2px 0 #1F1B18,
+      0 0 8px #1F1B18;
+  }
+
+  #subtitle {
+    transition: opacity 400ms;
+  }
+
+  #subtitle.hidden {
+    opacity: 0;
+  }
+
+  .original {
+    font-size: 52px;
+    line-height: 1.6;
+  }
+
+  .translation {
+    font-size: 38px;
+    line-height: 1.6;
+    color: #F6F1E7;
+  }
+
+  rt {
+    font-size: 45%;
+  }
+</style>
+</head>
+<body>
+<div id="subtitle" class="hidden">
+  <div class="original"></div>
+  <div class="translation"></div>
+</div>
+
+<script>
+  // Seconds a subtitle stays on screen after the last thing you said.
+  const VISIBLE_SECONDS = 8;
+
+  const subtitle = document.getElementById("subtitle");
+  const original = subtitle.querySelector(".original");
+  const translation = subtitle.querySelector(".translation");
+
+  let shownId = 0;
+  let hideTimer = null;
+
+  // Built with DOM nodes, not HTML strings, so recognized text can never inject markup.
+  function render(container, lines) {
+    container.replaceChildren();
+
+    for (const line of lines) {
+      const lineElement = document.createElement("div");
+
+      for (const piece of line) {
+        if (piece.ruby) {
+          const ruby = document.createElement("ruby");
+          const reading = document.createElement("rt");
+
+          ruby.append(piece.text);
+          reading.textContent = piece.ruby;
+          ruby.append(reading);
+          lineElement.append(ruby);
+        } else {
+          lineElement.append(piece.text);
+        }
+      }
+
+      container.append(lineElement);
+    }
+  }
+
+  async function poll() {
+    try {
+      const response = await fetch("/subtitle", { cache: "no-store" });
+      const message = await response.json();
+
+      if (message.id !== shownId && message.original) {
+        shownId = message.id;
+
+        render(original, message.original);
+        render(translation, message.translation);
+
+        subtitle.classList.remove("hidden");
+
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => subtitle.classList.add("hidden"), VISIBLE_SECONDS * 1000);
+      }
+    } catch {
+      // The app is closed or restarting; keep trying quietly.
+    }
+
+    setTimeout(poll, 300);
+  }
+
+  poll();
+</script>
+</body>
+</html>

@@ -1,0 +1,487 @@
+_version: 2
+
+# Header
+header.streamer:
+  en: "Streamer mode"
+  es: "Modo Streamer"
+  ja: "配信モード"
+header.settings:
+  en: "Settings"
+  es: "Ajustes"
+  ja: "設定"
+header.back:
+  en: "Back to translator"
+  es: "Volver al traductor"
+  ja: "翻訳に戻る"
+
+# Translator
+translate.placeholder:
+  en: "Type in Spanish or Japanese…"
+  es: "Escribe en español o japonés…"
+  ja: "スペイン語か日本語で入力…"
+translate.empty:
+  en: "The translation will appear here"
+  es: "La traducción aparecerá aquí"
+  ja: "ここに翻訳が表示されます"
+translate.swap:
+  en: "⇄ Swap"
+  es: "⇄ Intercambiar"
+  ja: "⇄ 入れ替え"
+translate.copy:
+  en: "Copy"
+  es: "Copiar"
+  ja: "コピー"
+translate.copied:
+  en: "Copied"
+  es: "Copiado"
+  ja: "コピーしました"
+translate.listen:
+  en: "Listen"
+  es: "Escuchar"
+  ja: "聞く"
+translate.start_voicevox:
+  en: "Start VOICEVOX"
+  es: "Iniciar VOICEVOX"
+  ja: "VOICEVOXを起動"
+translate.starting_voicevox:
+  en: "Starting VOICEVOX…"
+  es: "Iniciando VOICEVOX…"
+  ja: "VOICEVOXを起動中…"
+
+# Streamer mode
+streamer.status_off:
+  en: "Microphone off"
+  es: "Micrófono apagado"
+  ja: "マイクオフ"
+streamer.status_loading:
+  en: "Loading Whisper…"
+  es: "Cargando Whisper…"
+  ja: "Whisperを読み込み中…"
+streamer.status_listening:
+  en: "Listening"
+  es: "Escuchando"
+  ja: "聞き取り中"
+streamer.status_processing:
+  en: "Transcribing and translating…"
+  es: "Transcribiendo y traduciendo…"
+  ja: "文字起こしと翻訳中…"
+streamer.empty:
+  en: "Press “Start listening” and speak in Spanish or Japanese"
+  es: "Pulsa «Empezar a escuchar» y habla en español o japonés"
+  ja: "「聞き取り開始」を押して、スペイン語か日本語で話してください"
+streamer.copy_url:
+  en: "Copy URL"
+  es: "Copiar URL"
+  ja: "URLをコピー"
+streamer.stop:
+  en: "Stop"
+  es: "Detener"
+  ja: "停止"
+streamer.start:
+  en: "Start listening"
+  es: "Empezar a escuchar"
+  ja: "聞き取り開始"
+
+# Setup: welcome and component list
+setup.welcome_title:
+  en: "Welcome"
+  es: "Bienvenido"
+  ja: "ようこそ"
+setup.welcome_text:
+  en: "Before you start, the app needs to download what makes the translator work. Items marked “Required” are essential; the rest add voice and Streamer mode."
+  es: "Antes de empezar hay que descargar lo que hace funcionar al traductor. Lo marcado como «Necesario» es imprescindible; el resto añade la voz y el Modo Streamer."
+  ja: "始める前に、翻訳に必要なものをダウンロードします。「必須」のものは欠かせません。その他は読み上げと配信モードを追加します。"
+setup.note:
+  en: "Everything installs in your personal folder and never asks for a password."
+  es: "Todo se instala en tu carpeta personal y no pide contraseña."
+  ja: "すべて個人フォルダにインストールされ、パスワードは不要です。"
+setup.install_all:
+  en: "Install everything missing"
+  es: "Instalar todo lo que falta"
+  ja: "足りないものをすべてインストール"
+setup.start_without_optional:
+  en: "Start without the optional ones"
+  es: "Empezar sin los opcionales"
+  ja: "オプションなしで始める"
+setup.start:
+  en: "Start"
+  es: "Empezar"
+  ja: "始める"
+setup.required:
+  en: "Required"
+  es: "Necesario"
+  ja: "必須"
+setup.checking:
+  en: "Checking…"
+  es: "Comprobando…"
+  ja: "確認中…"
+setup.installed:
+  en: "Installed"
+  es: "Instalado"
+  ja: "インストール済み"
+setup.install:
+  en: "Install"
+  es: "Instalar"
+  ja: "インストール"
+setup.retry:
+  en: "Retry"
+  es: "Reintentar"
+  ja: "再試行"
+setup.preparing:
+  en: "Preparing…"
+  es: "Preparando…"
+  ja: "準備中…"
+setup.downloading:
+  en: "Downloading %{percent} %"
+  es: "Descargando %{percent} %"
+  ja: "ダウンロード中 %{percent}%"
+setup.extracting:
+  en: "Extracting…"
+  es: "Descomprimiendo…"
+  ja: "展開中…"
+setup.starting:
+  en: "Starting…"
+  es: "Iniciando…"
+  ja: "起動中…"
+
+# Components
+component.model_name:
+  en: "Translation model (%{model})"
+  es: "Modelo de traducción (%{model})"
+  ja: "翻訳モデル（%{model}）"
+component.piper_name:
+  en: "Piper with a Spanish voice"
+  es: "Piper con voz en español"
+  ja: "Piper（スペイン語の音声）"
+component.ollama_purpose:
+  en: "Runs the model that translates."
+  es: "Ejecuta el modelo que traduce."
+  ja: "翻訳するモデルを動かします。"
+component.model_purpose:
+  en: "The Spanish ⇄ Japanese translator."
+  es: "El traductor español ⇄ japonés."
+  ja: "スペイン語 ⇄ 日本語の翻訳エンジンです。"
+component.whisper_purpose:
+  en: "Recognizes your voice in Streamer mode."
+  es: "Reconoce tu voz en el Modo Streamer."
+  ja: "配信モードであなたの声を認識します。"
+component.voicevox_purpose:
+  en: "Reads Japanese aloud."
+  es: "Lee en voz alta el japonés."
+  ja: "日本語を読み上げます。"
+component.piper_purpose:
+  en: "Reads Spanish aloud."
+  es: "Lee en voz alta el español."
+  ja: "スペイン語を読み上げます。"
+
+# Download sizes, written with each language's decimal separator
+size.ollama:
+  en: "1.5 GB"
+  es: "1,5 GB"
+  ja: "1.5 GB"
+size.model_large:
+  en: "4.6 GB"
+  es: "4,6 GB"
+  ja: "4.6 GB"
+size.model_small:
+  en: "1.1 GB"
+  es: "1,1 GB"
+  ja: "1.1 GB"
+size.whisper:
+  en: "570 MB"
+  es: "570 MB"
+  ja: "570 MB"
+size.voicevox:
+  en: "1.9 GB"
+  es: "1,9 GB"
+  ja: "1.9 GB"
+size.piper:
+  en: "90 MB"
+  es: "90 MB"
+  ja: "90 MB"
+
+# Settings
+settings.model_title:
+  en: "Translation model"
+  es: "Modelo de traducción"
+  ja: "翻訳モデル"
+settings.components_title:
+  en: "Components"
+  es: "Componentes"
+  ja: "コンポーネント"
+settings.model_large:
+  en: "Best quality. Needs a graphics card with about 6 GB."
+  es: "Mejor calidad. Necesita una tarjeta gráfica con unos 6 GB."
+  ja: "最高品質。約6 GBのグラフィックカードが必要です。"
+settings.model_small:
+  en: "Faster and lighter, for modest computers."
+  es: "Más rápido y ligero, para ordenadores modestos."
+  ja: "高速で軽量。性能が控えめなパソコン向けです。"
+
+settings.voice_title:
+  en: "Japanese voice (VOICEVOX)"
+  es: "Voz japonesa (VOICEVOX)"
+  ja: "日本語の音声（VOICEVOX）"
+settings.voice_loading:
+  en: "Loading voices…"
+  es: "Cargando voces…"
+  ja: "音声を読み込み中…"
+settings.voice_not_installed:
+  en: "Install VOICEVOX under Components to choose a voice."
+  es: "Instala VOICEVOX en Componentes para elegir una voz."
+  ja: "音声を選ぶには、コンポーネントからVOICEVOXをインストールしてください。"
+settings.voice_not_running:
+  en: "VOICEVOX is not running."
+  es: "VOICEVOX no está iniciado."
+  ja: "VOICEVOXが起動していません。"
+settings.voice_placeholder:
+  en: "Choose a voice"
+  es: "Elige una voz"
+  ja: "音声を選択"
+settings.voice_search:
+  en: "Search voices"
+  es: "Buscar voz"
+  ja: "音声を検索"
+settings.voice_sample:
+  en: "Play sample"
+  es: "Escuchar demo"
+  ja: "試聴する"
+
+settings.whisper_title:
+  en: "Speech recognition (Whisper)"
+  es: "Reconocimiento de voz (Whisper)"
+  ja: "音声認識（Whisper）"
+whisper.speech_threshold:
+  en: "Speech threshold"
+  es: "Umbral de voz"
+  ja: "音声のしきい値"
+whisper.speech_threshold_help:
+  en: "Volume above which you count as speaking. Raise it if background noise creates subtitles; lower it if you are not detected."
+  es: "Volumen a partir del cual se considera que hablas. Súbelo si el ruido de fondo genera subtítulos; bájalo si no te detecta."
+  ja: "この音量を超えると話していると判断します。雑音で字幕が出るなら上げ、声が拾われないなら下げてください。"
+whisper.end_of_speech_ms:
+  en: "Pause that ends a sentence (ms)"
+  es: "Pausa que cierra la frase (ms)"
+  ja: "文の区切りとなる無音（ミリ秒）"
+whisper.end_of_speech_ms_help:
+  en: "Silence needed before a sentence is transcribed. Shorter shows subtitles sooner but may cut sentences."
+  es: "Silencio necesario para transcribir una frase. Más corto muestra antes los subtítulos, pero puede partir frases."
+  ja: "文を文字起こしするまでに必要な無音の長さです。短いほど早く表示されますが、文が途中で切れることがあります。"
+whisper.min_speech_ms:
+  en: "Minimum length (ms)"
+  es: "Duración mínima (ms)"
+  ja: "最短の長さ（ミリ秒）"
+whisper.min_speech_ms_help:
+  en: "Shorter sounds, like coughs or clicks, are ignored."
+  es: "Los sonidos más cortos, como toses o clics, se ignoran."
+  ja: "これより短い音（咳やクリック音など）は無視します。"
+whisper.max_segment_ms:
+  en: "Maximum sentence length (ms)"
+  es: "Duración máxima de frase (ms)"
+  ja: "文の最長の長さ（ミリ秒）"
+whisper.max_segment_ms_help:
+  en: "Long monologues are cut here so subtitles keep flowing."
+  es: "Los monólogos largos se cortan aquí para que los subtítulos sigan saliendo."
+  ja: "長く話し続けても字幕が途切れないよう、ここで区切ります。"
+whisper.threads:
+  en: "CPU threads"
+  es: "Hilos de CPU"
+  ja: "CPUスレッド数"
+whisper.threads_help:
+  en: "Threads Whisper uses. More is faster on the CPU, but leaves less for your game or stream."
+  es: "Hilos que usa Whisper. Más es más rápido en CPU, pero deja menos para tu juego o directo."
+  ja: "Whisperが使うスレッド数です。多いほどCPUでは速くなりますが、ゲームや配信に回る分が減ります。"
+whisper.beam_size:
+  en: "Beam size"
+  es: "Tamaño de haz"
+  ja: "ビームサイズ"
+whisper.beam_size_help:
+  en: "1 is the fastest. Higher values compare more candidates: slightly more accurate, but slower."
+  es: "1 es lo más rápido. Valores mayores comparan más candidatos: algo más preciso, pero más lento."
+  ja: "1が最速です。大きくするほど多くの候補を比べ、少し正確になりますが遅くなります。"
+whisper.applies_on_start:
+  en: "Changes apply the next time you start listening."
+  es: "Los cambios se aplican la próxima vez que empieces a escuchar."
+  ja: "変更は次に聞き取りを開始したときに反映されます。"
+whisper.reset:
+  en: "Reset to defaults"
+  es: "Restablecer valores"
+  ja: "初期値に戻す"
+
+# Errors
+error.create:
+  en: "Could not create %{path}: %{error}"
+  es: "No se pudo crear %{path}: %{error}"
+  ja: "%{path} を作成できませんでした: %{error}"
+error.save:
+  en: "Could not save %{path}: %{error}"
+  es: "No se pudo guardar %{path}: %{error}"
+  ja: "%{path} を保存できませんでした: %{error}"
+error.open:
+  en: "Could not open %{path}: %{error}"
+  es: "No se pudo abrir %{path}: %{error}"
+  ja: "%{path} を開けませんでした: %{error}"
+error.extract:
+  en: "Could not extract: %{error}"
+  es: "No se pudo descomprimir: %{error}"
+  ja: "展開できませんでした: %{error}"
+error.download:
+  en: "Could not download %{url}: %{error}"
+  es: "No se pudo descargar %{url}: %{error}"
+  ja: "%{url} をダウンロードできませんでした: %{error}"
+error.download_interrupted:
+  en: "The download was interrupted: %{error}"
+  es: "La descarga se interrumpió: %{error}"
+  ja: "ダウンロードが中断されました: %{error}"
+error.write_file:
+  en: "Could not write the file (is the disk full?): %{error}"
+  es: "No se pudo escribir el archivo (¿disco lleno?): %{error}"
+  ja: "ファイルを書き込めませんでした（ディスクの空き容量は足りていますか？）: %{error}"
+error.download_corrupt:
+  en: "The downloaded file arrived damaged. Please try again."
+  es: "El archivo descargado llegó dañado. Vuelve a intentarlo."
+  ja: "ダウンロードしたファイルが破損していました。もう一度お試しください。"
+error.invalid_install_path:
+  en: "Invalid install path: %{path}"
+  es: "Ruta de instalación no válida: %{path}"
+  ja: "インストール先が無効です: %{path}"
+error.ollama_unresponsive:
+  en: "Ollama is not responding"
+  es: "Ollama no responde"
+  ja: "Ollamaが応答しません"
+error.ollama_not_installed:
+  en: "Ollama is not installed"
+  es: "Ollama no está instalado"
+  ja: "Ollamaがインストールされていません"
+error.ollama_start:
+  en: "Could not start Ollama: %{error}"
+  es: "No se pudo iniciar Ollama: %{error}"
+  ja: "Ollamaを起動できませんでした: %{error}"
+error.ollama_exited:
+  en: "Ollama closed while starting (%{status})"
+  es: "Ollama se cerró al iniciar (%{status})"
+  ja: "Ollamaが起動中に終了しました（%{status}）"
+error.ollama_timeout:
+  en: "Ollama did not respond in time"
+  es: "Ollama no respondió a tiempo"
+  ja: "Ollamaが時間内に応答しませんでした"
+error.ollama_pull:
+  en: "Ollama could not download the model: %{error}"
+  es: "Ollama no pudo descargar el modelo: %{error}"
+  ja: "Ollamaがモデルをダウンロードできませんでした: %{error}"
+error.ollama_pull_unconfirmed:
+  en: "The model download ended without being confirmed"
+  es: "La descarga del modelo terminó sin confirmarse"
+  ja: "モデルのダウンロードが完了を確認できないまま終了しました"
+error.ollama_create:
+  en: "Ollama could not prepare the model: %{error}"
+  es: "Ollama no pudo preparar el modelo: %{error}"
+  ja: "Ollamaがモデルを準備できませんでした: %{error}"
+error.model_unreachable:
+  en: "Could not reach the model at %{url}. Is Ollama running?\n%{error}"
+  es: "No se pudo contactar el modelo en %{url}. ¿Está corriendo Ollama?\n%{error}"
+  ja: "%{url} のモデルに接続できませんでした。Ollamaは起動していますか？\n%{error}"
+error.model_unexpected:
+  en: "Unexpected answer from the model: %{response}"
+  es: "Respuesta inesperada del modelo: %{response}"
+  ja: "モデルから予期しない応答がありました: %{response}"
+error.overlay_port:
+  en: "Could not open %{address} for OBS: %{error}"
+  es: "No se pudo abrir %{address} para OBS: %{error}"
+  ja: "OBS用の %{address} を開けませんでした: %{error}"
+error.voicevox_start:
+  en: "Could not start VOICEVOX at %{path}\n%{error}"
+  es: "No se pudo iniciar VOICEVOX en %{path}\n%{error}"
+  ja: "%{path} のVOICEVOXを起動できませんでした\n%{error}"
+error.voicevox_exited:
+  en: "VOICEVOX closed while starting (%{status})"
+  es: "VOICEVOX se cerró al iniciar (%{status})"
+  ja: "VOICEVOXが起動中に終了しました（%{status}）"
+error.voicevox_timeout:
+  en: "VOICEVOX did not respond within %{seconds} seconds"
+  es: "VOICEVOX no respondió en %{seconds} segundos"
+  ja: "VOICEVOXが%{seconds}秒以内に応答しませんでした"
+error.voicevox_unreachable:
+  en: "Could not reach VOICEVOX at %{url}. Is the engine running?\n%{error}"
+  es: "No se pudo contactar VOICEVOX en %{url}. ¿Está corriendo el motor?\n%{error}"
+  ja: "%{url} のVOICEVOXに接続できませんでした。エンジンは起動していますか？\n%{error}"
+error.voicevox_prepare:
+  en: "Could not prepare VOICEVOX: %{error}"
+  es: "No se pudo preparar VOICEVOX: %{error}"
+  ja: "VOICEVOXを準備できませんでした: %{error}"
+error.audio_save:
+  en: "Could not save the audio to %{path}: %{error}"
+  es: "No se pudo guardar el audio en %{path}: %{error}"
+  ja: "音声を %{path} に保存できませんでした: %{error}"
+error.piper_voice_missing:
+  en: "The Piper voice was not found at %{path}"
+  es: "No se encontró la voz de Piper en %{path}"
+  ja: "%{path} にPiperの音声が見つかりませんでした"
+error.piper_run:
+  en: "Could not run Piper at %{path}\n%{error}"
+  es: "No se pudo ejecutar Piper en %{path}\n%{error}"
+  ja: "%{path} のPiperを実行できませんでした\n%{error}"
+error.piper_send:
+  en: "Could not send the text to Piper: %{error}"
+  es: "No se pudo enviar el texto a Piper: %{error}"
+  ja: "Piperにテキストを送れませんでした: %{error}"
+error.piper_failed:
+  en: "Piper failed: %{error}"
+  es: "Piper falló: %{error}"
+  ja: "Piperが失敗しました: %{error}"
+error.piper_exit:
+  en: "Piper ended with an error (%{status})"
+  es: "Piper terminó con error (%{status})"
+  ja: "Piperがエラーで終了しました（%{status}）"
+error.audio_output:
+  en: "Could not open the audio output: %{error}"
+  es: "No se pudo abrir la salida de audio: %{error}"
+  ja: "音声出力を開けませんでした: %{error}"
+error.audio_open:
+  en: "Could not open the audio: %{error}"
+  es: "No se pudo abrir el audio: %{error}"
+  ja: "音声を開けませんでした: %{error}"
+error.audio_invalid:
+  en: "The generated audio is not valid: %{error}"
+  es: "El audio generado no es válido: %{error}"
+  ja: "生成された音声が無効です: %{error}"
+error.whisper_load:
+  en: "Could not load Whisper from %{path}: %{error}"
+  es: "No se pudo cargar Whisper desde %{path}: %{error}"
+  ja: "%{path} からWhisperを読み込めませんでした: %{error}"
+error.whisper_prepare:
+  en: "Could not prepare Whisper: %{error}"
+  es: "No se pudo preparar Whisper: %{error}"
+  ja: "Whisperを準備できませんでした: %{error}"
+error.whisper_failed:
+  en: "Whisper failed: %{error}"
+  es: "Whisper falló: %{error}"
+  ja: "Whisperが失敗しました: %{error}"
+error.mic_stopped:
+  en: "The microphone stopped sending audio"
+  es: "El micrófono dejó de enviar audio"
+  ja: "マイクからの音声が途切れました"
+error.mic_missing:
+  en: "No microphone was found"
+  es: "No se encontró ningún micrófono"
+  ja: "マイクが見つかりませんでした"
+error.mic_config:
+  en: "Could not read the microphone settings: %{error}"
+  es: "No se pudo leer la configuración del micrófono: %{error}"
+  ja: "マイクの設定を読み込めませんでした: %{error}"
+error.mic_format:
+  en: "Unsupported microphone format: %{format}"
+  es: "Formato de micrófono no soportado: %{format}"
+  ja: "対応していないマイク形式です: %{format}"
+error.mic_start:
+  en: "Could not start the microphone: %{error}"
+  es: "No se pudo iniciar el micrófono: %{error}"
+  ja: "マイクを開始できませんでした: %{error}"
+error.mic_open:
+  en: "Could not open the microphone: %{error}"
+  es: "No se pudo abrir el micrófono: %{error}"
+  ja: "マイクを開けませんでした: %{error}"
+error.voicevox_voices:
+  en: "Could not read the VOICEVOX voices: %{error}"
+  es: "No se pudieron leer las voces de VOICEVOX: %{error}"
+  ja: "VOICEVOXの音声一覧を読み込めませんでした: %{error}"

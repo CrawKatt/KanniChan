@@ -1,0 +1,80 @@
+name: Windows
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Windows (${{ matrix.gpu }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - gpu: nvidia
+            features: cuda
+          - gpu: amd
+            features: vulkan
+
+    env:
+      LIBCLANG_PATH: C:\Program Files\LLVM\bin
+      # Without this, whisper.cpp targets the runner's own CPU (and GPU, which it lacks),
+      # producing a binary that can crash on users' machines.
+      GGML_NATIVE: "OFF"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.gpu }}
+
+      - name: Install CUDA
+        if: matrix.gpu == 'nvidia'
+        uses: Jimver/cuda-toolkit@v0.2.36
+        with:
+          method: local
+
+      - name: Install Vulkan SDK
+        if: matrix.gpu == 'amd'
+        uses: jakoch/install-vulkan-sdk-action@v1.8.1
+        with:
+          install_runtime: true
+          cache: true
+          stripdown: true
+
+      - name: Build
+        run: cargo build --release --locked --no-default-features --features ${{ matrix.features }}
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $dist = "kannichan-windows-${{ matrix.gpu }}"
+          New-Item -ItemType Directory $dist | Out-Null
+          Copy-Item target/release/kannichan.exe $dist/
+
+          # The CUDA build links the CUDA runtime dynamically; users rarely have the toolkit.
+          if ("${{ matrix.gpu }}" -eq "nvidia") {
+            Get-ChildItem -Recurse "$env:CUDA_PATH\bin" -Include cudart64_*.dll, cublas64_*.dll, cublasLt64_*.dll |
+              Copy-Item -Destination $dist/
+          }
+
+          Compress-Archive -Path "$dist/*" -DestinationPath "$dist.zip"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: kannichan-windows-${{ matrix.gpu }}
+          path: kannichan-windows-${{ matrix.gpu }}.zip
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: kannichan-windows-${{ matrix.gpu }}.zip

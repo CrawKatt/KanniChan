@@ -1,0 +1,53 @@
+{
+  "name": "Washi",
+  "themes": [
+    {
+      "name": "Washi",
+      "mode": "light",
+      "font.family": "Noto Serif CJK JP",
+      "font.size": 18,
+      "radius": 4,
+      "shadow": false,
+      "colors": {
+        "background": "#F6F1E7",
+        "foreground": "#2A2420",
+        "border": "#DDD3C2",
+        "input.border": "#DDD3C2",
+        "ring": "#B83A25",
+        "caret": "#2A2420",
+        "muted.background": "#EDE6D8",
+        "muted.foreground": "#6E645A",
+        "primary.background": "#B83A25",
+        "primary.hover.background": "#A33220",
+        "primary.active.background": "#8F2B1B",
+        "primary.foreground": "#FFFFFF",
+        "danger.background": "#9E2A1A",
+        "selection.background": "#B83A2533"
+      }
+    },
+    {
+      "name": "Sumi",
+      "mode": "dark",
+      "font.family": "Noto Serif CJK JP",
+      "font.size": 18,
+      "radius": 4,
+      "shadow": false,
+      "colors": {
+        "background": "#1F1B18",
+        "foreground": "#ECE4D6",
+        "border": "#3A332D",
+        "input.border": "#3A332D",
+        "ring": "#D9573F",
+        "caret": "#ECE4D6",
+        "muted.background": "#2A2521",
+        "muted.foreground": "#A69C8F",
+        "primary.background": "#B83A25",
+        "primary.hover.background": "#C9452F",
+        "primary.active.background": "#A33220",
+        "primary.foreground": "#FFFFFF",
+        "danger.background": "#F07A66",
+        "selection.background": "#D9573F44"
+      }
+    }
+  ]
+}
