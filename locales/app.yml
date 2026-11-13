@@ -184,17 +184,17 @@ size.model_large:
   es: "4,6 GB"
   ja: "4.6 GB"
 size.model_small:
-  en: "1.1 GB"
-  es: "1,1 GB"
-  ja: "1.1 GB"
+  en: "1 GB"
+  es: "1 GB"
+  ja: "1 GB"
 size.whisper:
   en: "570 MB"
   es: "570 MB"
   ja: "570 MB"
 size.whisper_cuda:
-  en: "1.1 GB"
-  es: "1,1 GB"
-  ja: "1.1 GB"
+  en: "1 GB"
+  es: "1 GB"
+  ja: "1 GB"
 size.voicevox:
   en: "1.9 GB"
   es: "1,9 GB"

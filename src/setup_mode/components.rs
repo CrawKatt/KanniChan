@@ -66,12 +66,12 @@ mod platform {
     #[cfg(feature = "cuda")]
     pub const WHISPER_GPU_RUNTIME: &[PinnedFile] = &[
         PinnedFile {
-            url: "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/windows-x86_64/cuda_cudart-windows-x86_64-12.9.79-archive.zip",
-            sha256: "179e9c43b0735ffe67207b3da556eb5a0c50f3047961882b7657d3b822d34ef8",
+            url: "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/windows-x86_64/cuda_cudart-windows-x86_64-13.2.51-archive.zip",
+            sha256: "906b430b53e6396f7cbaa6874fbe7f9307a184e830b119a4ad3f58dc6e0165c6",
         },
         PinnedFile {
-            url: "https://developer.download.nvidia.com/compute/cuda/redist/libcublas/windows-x86_64/libcublas-windows-x86_64-12.9.1.4-archive.zip",
-            sha256: "d534d98b0b453a98914dbf3adf47d7e84b55037abf02f87466439e1dcef581ed",
+            url: "https://developer.download.nvidia.com/compute/cuda/redist/libcublas/windows-x86_64/libcublas-windows-x86_64-13.3.0.5-archive.zip",
+            sha256: "438a88f07af3721eda15ed1f4d2b957ea810e29061b2a6292837f35520dbd212",
         },
     ];
     #[cfg(not(feature = "cuda"))]
@@ -259,7 +259,7 @@ fn install_translation_model(report: &mut dyn FnMut(Step)) -> Result<(), String>
 fn whisper_gpu_dll_folder(file: &PinnedFile) -> PathBuf {
     let archive_name = file.url.rsplit('/').next().unwrap_or_default().trim_end_matches(".zip");
 
-    whisper_gpu_runtime_dir().join(archive_name).join("bin")
+    whisper_gpu_runtime_dir().join(archive_name).join("bin").join("x64")
 }
 
 fn whisper_gpu_runtime_dir() -> PathBuf {

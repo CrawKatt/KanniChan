@@ -44,7 +44,7 @@ jobs:
         if: matrix.gpu == 'nvidia'
         uses: Jimver/cuda-toolkit@v0.2.36
         with:
-          cuda: "12.9.1"
+          cuda: "13.2.0"
           method: local
 
       - name: Install Vulkan SDK
