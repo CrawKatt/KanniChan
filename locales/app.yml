@@ -295,6 +295,14 @@ whisper.speech_threshold_help:
   en: "Volume above which you count as speaking. Raise it if background noise creates subtitles; lower it if you are not detected."
   es: "Volumen a partir del cual se considera que hablas. Súbelo si el ruido de fondo genera subtítulos; bájalo si no te detecta."
   ja: "この音量を超えると話していると判断します。雑音で字幕が出るなら上げ、声が拾われないなら下げてください。"
+whisper.voice_threshold:
+  en: "Voice detection"
+  es: "Detección de voz"
+  ja: "音声検出"
+whisper.voice_threshold_help:
+  en: "How sure it must be that a sound is a human voice. Raise it if claps or knocks become text."
+  es: "Qué tan seguro debe estar de que un sonido es voz humana. Súbelo si aplausos o golpes se convierten en texto."
+  ja: "音が人の声だと判断する確かさ。拍手や物音が文字になるなら上げてください。"
 whisper.end_of_speech_ms:
   en: "Pause that ends a sentence (ms)"
   es: "Pausa que cierra la frase (ms)"

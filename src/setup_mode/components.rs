@@ -5,7 +5,7 @@ use crate::app::paths::path_setting;
 use crate::setup_mode::archive;
 use crate::setup_mode::download::download;
 use crate::setup_mode::ollama;
-use crate::stream_mode::streamer::whisper_model_path;
+use crate::stream_mode::streamer::{vad_model_path, whisper_model_path};
 use crate::translate_mode::model::TranslationModel;
 use crate::voice::tts::{piper_bin_path, piper_voice_path};
 use crate::voice::voicevox;
@@ -94,6 +94,11 @@ const WHISPER_MODEL: PinnedFile = PinnedFile {
     sha256: "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
 };
 
+const VAD_MODEL: PinnedFile = PinnedFile {
+    url: "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin",
+    sha256: "2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987",
+};
+
 const PIPER_VOICE: PinnedFile = PinnedFile {
     url: "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_MX/claude/high/es_MX-claude-high.onnx",
     sha256: "3ef40a71ea63852cd8ab7e6fa7d2ecdcfa67a0b47c9c48e3f10e02ee02083ea0",
@@ -177,7 +182,9 @@ impl Component {
                 ollama::is_running()
                     && ollama::has_model(TranslationModel::selected().ollama_name())
             }
-            Component::Whisper => whisper_model_path().exists() && whisper_gpu_runtime_installed(),
+            Component::Whisper => {
+                whisper_model_path().exists() && vad_model_path().exists() && whisper_gpu_runtime_installed()
+            }
             Component::Voicevox => voicevox::is_installed(),
             Component::Piper => piper_bin_path().exists() && piper_voice_path().exists(),
         }
@@ -295,6 +302,12 @@ fn install_whisper(report: &mut dyn FnMut(Step)) -> Result<(), String> {
         download(WHISPER_MODEL.url, WHISPER_MODEL.sha256, &model, &mut |fraction| {
             report(Step::Downloading(fraction))
         })?;
+    }
+
+    let vad_model = vad_model_path();
+
+    if !vad_model.exists() {
+        download(VAD_MODEL.url, VAD_MODEL.sha256, &vad_model, &mut |_| {})?;
     }
 
     for file in platform::WHISPER_GPU_RUNTIME {

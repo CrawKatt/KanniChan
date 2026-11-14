@@ -3,6 +3,7 @@ use serde_json::{Value, json};
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct WhisperSettings {
     pub speech_threshold: f64,
+    pub voice_threshold: f64,
     pub end_of_speech_ms: f64,
     pub min_speech_ms: f64,
     pub max_segment_ms: f64,
@@ -14,6 +15,7 @@ impl Default for WhisperSettings {
     fn default() -> Self {
         Self {
             speech_threshold: 0.015,
+            voice_threshold: 0.5,
             end_of_speech_ms: 700.,
             min_speech_ms: 300.,
             max_segment_ms: 12_000.,
@@ -26,6 +28,7 @@ impl Default for WhisperSettings {
 #[derive(Clone, Copy, PartialEq)]
 pub enum Field {
     SpeechThreshold,
+    VoiceThreshold,
     EndOfSpeech,
     MinSpeech,
     MaxSegment,
@@ -34,8 +37,9 @@ pub enum Field {
 }
 
 impl Field {
-    pub const ALL: [Field; 6] = [
+    pub const ALL: [Field; 7] = [
         Field::SpeechThreshold,
+        Field::VoiceThreshold,
         Field::EndOfSpeech,
         Field::MinSpeech,
         Field::MaxSegment,
@@ -46,6 +50,7 @@ impl Field {
     pub fn key(self) -> &'static str {
         match self {
             Field::SpeechThreshold => "speech_threshold",
+            Field::VoiceThreshold => "voice_threshold",
             Field::EndOfSpeech => "end_of_speech_ms",
             Field::MinSpeech => "min_speech_ms",
             Field::MaxSegment => "max_segment_ms",
@@ -58,6 +63,7 @@ impl Field {
     pub fn range(self) -> (f64, f64, f64) {
         match self {
             Field::SpeechThreshold => (0.005, 0.2, 0.005),
+            Field::VoiceThreshold => (0.1, 0.9, 0.05),
             Field::EndOfSpeech => (200., 3_000., 100.),
             Field::MinSpeech => (100., 2_000., 100.),
             Field::MaxSegment => (2_000., 30_000., 1_000.),
@@ -69,6 +75,7 @@ impl Field {
     pub fn get(self, settings: &WhisperSettings) -> f64 {
         match self {
             Field::SpeechThreshold => settings.speech_threshold,
+            Field::VoiceThreshold => settings.voice_threshold,
             Field::EndOfSpeech => settings.end_of_speech_ms,
             Field::MinSpeech => settings.min_speech_ms,
             Field::MaxSegment => settings.max_segment_ms,
@@ -77,11 +84,15 @@ impl Field {
         }
     }
 
+    pub fn is_fractional(self) -> bool {
+        matches!(self, Field::SpeechThreshold | Field::VoiceThreshold)
+    }
+
     /// Out-of-range values are clamped; everything but the threshold is whole.
     pub fn set(self, settings: &mut WhisperSettings, value: f64) {
         let (min, max, _) = self.range();
         let value = value.clamp(min, max);
-        let value = if self == Field::SpeechThreshold {
+        let value = if self.is_fractional() {
             value
         } else {
             value.round()
@@ -89,6 +100,7 @@ impl Field {
 
         let slot = match self {
             Field::SpeechThreshold => &mut settings.speech_threshold,
+            Field::VoiceThreshold => &mut settings.voice_threshold,
             Field::EndOfSpeech => &mut settings.end_of_speech_ms,
             Field::MinSpeech => &mut settings.min_speech_ms,
             Field::MaxSegment => &mut settings.max_segment_ms,

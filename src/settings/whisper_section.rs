@@ -22,6 +22,8 @@ fn format_value(field: Field, settings: &WhisperSettings) -> String {
 
     if field == Field::SpeechThreshold {
         format!("{value:.3}")
+    } else if field.is_fractional() {
+        format!("{value:.2}")
     } else {
         format!("{value:.0}")
     }

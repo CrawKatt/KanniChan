@@ -7,7 +7,10 @@ use std::time::Duration;
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{FromSample, SampleFormat, SizedSample};
-use whisper_rs::{FullParams, SamplingStrategy, WhisperContext, WhisperContextParameters, WhisperState};
+use whisper_rs::{
+    FullParams, SamplingStrategy, WhisperContext, WhisperContextParameters, WhisperState,
+    WhisperVadContext, WhisperVadContextParams, WhisperVadParams,
+};
 
 use crate::language::furigana;
 use crate::app::paths::path_setting;
@@ -16,6 +19,7 @@ use crate::stream_mode::whisper_settings::WhisperSettings;
 use crate::translate_mode::translate::{self, Direction, Translation};
 
 const DEFAULT_WHISPER_MODEL: &str = "whisper/ggml-large-v3-turbo-q5_0.bin";
+const DEFAULT_VAD_MODEL: &str = "whisper/ggml-silero-v6.2.0.bin";
 const WHISPER_SAMPLE_RATE: u32 = 16_000;
 const FRAME_MS: usize = 30;
 const KNOWN_HALLUCINATIONS: &[&str] = &[
@@ -66,6 +70,10 @@ pub fn whisper_model_path() -> PathBuf {
     path_setting("WHISPER_MODEL", DEFAULT_WHISPER_MODEL)
 }
 
+pub fn vad_model_path() -> PathBuf {
+    path_setting("VAD_MODEL", DEFAULT_VAD_MODEL)
+}
+
 fn listen(
     events: &Sender<StreamerEvent>,
     stop: &AtomicBool,
@@ -86,6 +94,14 @@ fn listen(
     let mut whisper = context
         .create_state()
         .map_err(|error| t!("error.whisper_prepare", error = error).to_string())?;
+
+    let vad_model = vad_model_path();
+    let mut vad_params = WhisperVadContextParams::new();
+    vad_params.set_n_threads(settings.threads as i32);
+    vad_params.set_use_gpu(false);
+
+    let mut vad = WhisperVadContext::new(&vad_model.to_string_lossy(), vad_params)
+        .map_err(|error| t!("error.whisper_load", path = vad_model.display(), error = error).to_string())?;
 
     let (audio_sender, audio) = mpsc::channel();
 
@@ -108,6 +124,11 @@ fn listen(
             let _ = events.send(StreamerEvent::Processing);
 
             let audio_16k = resample(&sentence, sample_rate, WHISPER_SAMPLE_RATE);
+
+            if !contains_voice(&mut vad, &audio_16k, settings)? {
+                let _ = events.send(StreamerEvent::Listening);
+                continue;
+            }
 
             if let Some(subtitle) = transcribe(&mut whisper, &audio_16k, settings)? {
                 let _ = events.send(StreamerEvent::Subtitle(subtitle));
@@ -273,6 +294,20 @@ fn rms(frame: &[f32]) -> f32 {
     let energy: f32 = frame.iter().map(|sample| sample * sample).sum();
 
     (energy / frame.len() as f32).sqrt()
+}
+
+fn contains_voice(
+    vad: &mut WhisperVadContext,
+    audio: &[f32],
+    settings: WhisperSettings,
+) -> Result<bool, String> {
+    let mut params = WhisperVadParams::new();
+    params.set_threshold(settings.voice_threshold as f32);
+    params.set_min_speech_duration(settings.min_speech_ms as i32);
+
+    vad.segments_from_samples(params, audio)
+        .map(|segments| segments.num_segments() > 0)
+        .map_err(|error| t!("error.whisper_failed", error = error).to_string())
 }
 
 fn transcribe(
