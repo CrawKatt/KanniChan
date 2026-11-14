@@ -251,6 +251,38 @@ settings.voice_sample:
   es: "Escuchar demo"
   ja: "試聴する"
 
+settings.subtitle_title:
+  en: "Streamer mode subtitles"
+  es: "Subtítulos del Modo Streamer"
+  ja: "配信モードの字幕"
+subtitle.font_size:
+  en: "Size"
+  es: "Tamaño"
+  ja: "サイズ"
+subtitle.outline_width:
+  en: "Outline"
+  es: "Contorno"
+  ja: "縁取り"
+subtitle.text_color:
+  en: "Text color"
+  es: "Color del texto"
+  ja: "文字の色"
+subtitle.outline_color:
+  en: "Outline color"
+  es: "Color del contorno"
+  ja: "縁取りの色"
+subtitle.furigana:
+  en: "Show furigana"
+  es: "Mostrar furigana"
+  ja: "ふりがなを表示"
+subtitle.applies_live:
+  en: "Changes appear in OBS right away."
+  es: "Los cambios se ven en OBS al momento."
+  ja: "変更はすぐにOBSに反映されます。"
+subtitle.reset:
+  en: "Reset defaults"
+  es: "Restablecer valores"
+  ja: "初期値に戻す"
 settings.whisper_title:
   en: "Speech recognition (Whisper)"
   es: "Reconocimiento de voz (Whisper)"

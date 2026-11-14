@@ -4,6 +4,7 @@ use gpui_kit::*;
 
 use crate::app::preferences::Preferences;
 use crate::app::widgets::SECONDARY_TEXT_SIZE;
+use crate::settings::subtitle_section::SubtitleSection;
 use crate::settings::voice_picker::VoicePicker;
 use crate::settings::whisper_section::WhisperSection;
 use crate::setup_mode::view::SetupView;
@@ -15,6 +16,7 @@ pub struct SettingsView {
     setup_view: Entity<SetupView>,
     voice_picker: Entity<VoicePicker>,
     whisper_section: Entity<WhisperSection>,
+    subtitle_section: Entity<SubtitleSection>,
     model: TranslationModel,
     error: Option<String>,
 }
@@ -25,6 +27,7 @@ impl SettingsView {
             setup_view,
             voice_picker: cx.new(|cx| VoicePicker::new(window, cx)),
             whisper_section: cx.new(|cx| WhisperSection::new(window, cx)),
+            subtitle_section: cx.new(|cx| SubtitleSection::new(window, cx)),
             model: TranslationModel::selected(),
             error: None,
         }
@@ -114,6 +117,13 @@ impl Render for SettingsView {
             .child(Self::section_title(t!("settings.whisper_title").to_string()))
             .child(self.whisper_section.clone());
 
+        let subtitle_section = div()
+            .flex()
+            .flex_col()
+            .gap_3()
+            .child(Self::section_title(t!("settings.subtitle_title").to_string()))
+            .child(self.subtitle_section.clone());
+
         let components_section = div()
             .flex()
             .flex_col()
@@ -121,7 +131,7 @@ impl Render for SettingsView {
             .child(Self::section_title(t!("settings.components_title").to_string()))
             .child(self.setup_view.clone());
 
-        let sections = [model_section, voice_section, whisper_section, components_section]
+        let sections = [model_section, voice_section, whisper_section, subtitle_section, components_section]
             .map(|section| section.flex_shrink_0());
 
         div()

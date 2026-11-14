@@ -5,6 +5,7 @@ use std::thread;
 
 use serde_json::{Value, json};
 
+use crate::app::preferences::Preferences;
 use crate::stream_mode::streamer::Subtitle;
 use crate::translate_mode::translate::Translation;
 
@@ -92,12 +93,15 @@ fn respond(connection: TcpStream, latest: &Mutex<Value>) -> std::io::Result<()> 
         "/" => ("200 OK", "text/html; charset=utf-8", PAGE.to_string()),
 
         "/subtitle" => {
-            let subtitle = latest
+            let mut subtitle = latest
                 .lock()
-                .map(|latest| latest.to_string())
+                .map(|latest| latest.clone())
                 .unwrap_or_default();
 
-            ("200 OK", "application/json", subtitle)
+            // Sent with every poll so style changes in Settings reach OBS without a reload.
+            subtitle["style"] = Preferences::load().subtitle_style.to_json();
+
+            ("200 OK", "application/json", subtitle.to_string())
         }
 
         _ => ("404 Not Found", "text/plain", "No encontrado".to_string()),

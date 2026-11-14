@@ -12,6 +12,13 @@
     overflow: hidden;
   }
 
+  :root {
+    --font-size: 52px;
+    --outline-width: 2px;
+    --text-color: #FFFFFF;
+    --outline-color: #1F1B18;
+  }
+
   body {
     display: flex;
     flex-direction: column;
@@ -20,13 +27,12 @@
     padding: 0 4vw 6vh;
     box-sizing: border-box;
     font-family: "Noto Serif CJK JP", "Yu Mincho", serif;
-    color: #FFFFFF;
+    color: var(--text-color);
     text-align: center;
-    /* A dark outline keeps the text readable over any game or camera. */
-    text-shadow:
-      -2px -2px 0 #1F1B18, 2px -2px 0 #1F1B18,
-      -2px 2px 0 #1F1B18, 2px 2px 0 #1F1B18,
-      0 0 8px #1F1B18;
+    /* The stroke is centered on the glyph edge, so it is doubled and painted under the fill. */
+    -webkit-text-stroke: calc(var(--outline-width) * 2) var(--outline-color);
+    paint-order: stroke fill;
+    text-shadow: 0 0 calc(var(--outline-width) * 4) var(--outline-color);
   }
 
   #subtitle {
@@ -38,18 +44,22 @@
   }
 
   .original {
-    font-size: 52px;
+    font-size: var(--font-size);
     line-height: 1.6;
   }
 
   .translation {
-    font-size: 38px;
+    font-size: calc(var(--font-size) * 0.73);
     line-height: 1.6;
-    color: #F6F1E7;
   }
 
   rt {
     font-size: 45%;
+    -webkit-text-stroke-width: var(--outline-width);
+  }
+
+  .no-furigana rt {
+    display: none;
   }
 </style>
 </head>
@@ -95,10 +105,23 @@
     }
   }
 
+  function applyStyle(style) {
+    const root = document.documentElement.style;
+
+    root.setProperty("--font-size", `${style.font_size}px`);
+    root.setProperty("--outline-width", `${style.outline_width}px`);
+    root.setProperty("--text-color", style.text_color);
+    root.setProperty("--outline-color", style.outline_color);
+
+    document.body.classList.toggle("no-furigana", !style.furigana);
+  }
+
   async function poll() {
     try {
       const response = await fetch("/subtitle", { cache: "no-store" });
       const message = await response.json();
+
+      applyStyle(message.style);
 
       if (message.id !== shownId && message.original) {
         shownId = message.id;

@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use serde_json::{Value, json};
 
 use crate::app::paths::{APP_FOLDER, config_dir};
+use crate::stream_mode::subtitle_style::SubtitleStyle;
 use crate::stream_mode::whisper_settings::WhisperSettings;
 use crate::translate_mode::model::TranslationModel;
 
@@ -15,6 +16,7 @@ pub struct Preferences {
     pub translation_model: TranslationModel,
     pub voicevox_speaker: u32,
     pub whisper: WhisperSettings,
+    pub subtitle_style: SubtitleStyle,
 }
 
 impl Default for Preferences {
@@ -23,6 +25,7 @@ impl Default for Preferences {
             translation_model: TranslationModel::default(),
             voicevox_speaker: DEFAULT_VOICEVOX_SPEAKER,
             whisper: WhisperSettings::default(),
+            subtitle_style: SubtitleStyle::default(),
         }
     }
 }
@@ -52,6 +55,7 @@ impl Preferences {
             translation_model,
             voicevox_speaker,
             whisper: WhisperSettings::from_json(&saved["whisper"]),
+            subtitle_style: SubtitleStyle::from_json(&saved["subtitle_style"]),
         }
     }
 
@@ -67,6 +71,7 @@ impl Preferences {
             "translation_model": self.translation_model.id(),
             "voicevox_speaker": self.voicevox_speaker,
             "whisper": self.whisper.to_json(),
+            "subtitle_style": self.subtitle_style.to_json(),
         });
 
         fs::write(&path, saved.to_string())
