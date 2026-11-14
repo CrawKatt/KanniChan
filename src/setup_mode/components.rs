@@ -279,6 +279,16 @@ pub fn whisper_gpu_runtime_installed() -> bool {
         .all(|file| whisper_gpu_dll_folder(file).exists())
 }
 
+pub fn whisper_gpu_runtime_loadable() -> bool {
+    let path = std::env::var_os("PATH").unwrap_or_default();
+    let searched: Vec<PathBuf> = std::env::split_paths(&path).collect();
+
+    whisper_gpu_runtime_installed()
+        && platform::WHISPER_GPU_RUNTIME
+            .iter()
+            .all(|file| searched.contains(&whisper_gpu_dll_folder(file)))
+}
+
 /// Lets Windows find the delay-loaded CUDA DLLs (see build.rs) once they are installed.
 /// Must run before any other thread starts, as it changes the environment.
 pub fn add_whisper_gpu_runtime_to_dll_path() {

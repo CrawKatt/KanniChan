@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::PathBuf;
 
+use crate::app::preferences::Preferences;
+
 /// The app's folder inside the data and config folders.
 pub const APP_FOLDER: &str = "kannichan";
 
@@ -23,8 +25,12 @@ pub fn config_dir() -> PathBuf {
     env_path("XDG_CONFIG_HOME").unwrap_or_else(|| home().join(".config"))
 }
 
-pub fn path_setting(variable: &str, default_in_data_dir: &str) -> PathBuf {
-    env_path(variable).unwrap_or_else(|| data_dir().join(default_in_data_dir))
+pub fn install_root() -> PathBuf {
+    Preferences::load().install_dir.unwrap_or_else(data_dir)
+}
+
+pub fn path_setting(variable: &str, default_in_install_root: &str) -> PathBuf {
+    env_path(variable).unwrap_or_else(|| install_root().join(default_in_install_root))
 }
 
 fn env_path(variable: &str) -> Option<PathBuf> {

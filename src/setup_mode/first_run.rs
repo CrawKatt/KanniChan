@@ -1,12 +1,12 @@
 use std::fs;
 use std::path::PathBuf;
 
-use crate::app::paths::path_setting;
+use crate::app::paths::data_dir;
 
-const DEFAULT_SETUP_MARKER: &str = "kannichan/setup-done";
+const SETUP_MARKER: &str = "kannichan/setup-done";
 
 fn marker_path() -> PathBuf {
-    path_setting("SETUP_MARKER", DEFAULT_SETUP_MARKER)
+    data_dir().join(SETUP_MARKER)
 }
 
 pub fn is_done() -> bool {

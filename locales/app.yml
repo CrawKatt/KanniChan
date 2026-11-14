@@ -95,6 +95,18 @@ setup.note:
   en: "Everything installs in your personal folder and never asks for a password."
   es: "Todo se instala en tu carpeta personal y no pide contraseña."
   ja: "すべて個人フォルダにインストールされ、パスワードは不要です。"
+setup.install_folder:
+  en: "Install folder"
+  es: "Carpeta de instalación"
+  ja: "インストール先"
+setup.choose_folder:
+  en: "Choose folder…"
+  es: "Elegir carpeta…"
+  ja: "フォルダーを選択…"
+setup.default_folder:
+  en: "Use default"
+  es: "Usar predeterminada"
+  ja: "既定に戻す"
 setup.install_all:
   en: "Install everything missing"
   es: "Instalar todo lo que falta"
@@ -490,9 +502,9 @@ error.audio_invalid:
   es: "El audio generado no es válido: %{error}"
   ja: "生成された音声が無効です: %{error}"
 error.whisper_gpu_runtime_missing:
-  en: "NVIDIA's CUDA runtime is missing. Install Whisper from Settings."
-  es: "Falta el runtime CUDA de NVIDIA. Instala Whisper desde Ajustes."
-  ja: "NVIDIAのCUDAランタイムがありません。設定からWhisperをインストールしてください。"
+  en: "NVIDIA's CUDA runtime is missing. Install Whisper from Settings, then restart KanniChan."
+  es: "Falta el runtime CUDA de NVIDIA. Instala Whisper desde Ajustes y reinicia KanniChan."
+  ja: "NVIDIAのCUDAランタイムがありません。設定からWhisperをインストールし、KanniChanを再起動してください。"
 error.whisper_load:
   en: "Could not load Whisper from %{path}: %{error}"
   es: "No se pudo cargar Whisper desde %{path}: %{error}"

@@ -11,12 +11,13 @@ use crate::translate_mode::model::TranslationModel;
 /// 四国めたん (ノーマル), a clear neutral voice.
 const DEFAULT_VOICEVOX_SPEAKER: u32 = 2;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Preferences {
     pub translation_model: TranslationModel,
     pub voicevox_speaker: u32,
     pub whisper: WhisperSettings,
     pub subtitle_style: SubtitleStyle,
+    pub install_dir: Option<PathBuf>,
 }
 
 impl Default for Preferences {
@@ -26,6 +27,7 @@ impl Default for Preferences {
             voicevox_speaker: DEFAULT_VOICEVOX_SPEAKER,
             whisper: WhisperSettings::default(),
             subtitle_style: SubtitleStyle::default(),
+            install_dir: None,
         }
     }
 }
@@ -56,6 +58,7 @@ impl Preferences {
             voicevox_speaker,
             whisper: WhisperSettings::from_json(&saved["whisper"]),
             subtitle_style: SubtitleStyle::from_json(&saved["subtitle_style"]),
+            install_dir: saved["install_dir"].as_str().map(PathBuf::from),
         }
     }
 
@@ -72,6 +75,7 @@ impl Preferences {
             "voicevox_speaker": self.voicevox_speaker,
             "whisper": self.whisper.to_json(),
             "subtitle_style": self.subtitle_style.to_json(),
+            "install_dir": self.install_dir,
         });
 
         fs::write(&path, saved.to_string())

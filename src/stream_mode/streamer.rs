@@ -14,7 +14,7 @@ use whisper_rs::{
 
 use crate::language::furigana;
 use crate::app::paths::path_setting;
-use crate::setup_mode::components::whisper_gpu_runtime_installed;
+use crate::setup_mode::components::whisper_gpu_runtime_loadable;
 use crate::stream_mode::whisper_settings::WhisperSettings;
 use crate::translate_mode::translate::{self, Direction, Translation};
 
@@ -81,7 +81,7 @@ fn listen(
 ) -> Result<(), String> {
     let model = whisper_model_path();
 
-    if !whisper_gpu_runtime_installed() {
+    if !whisper_gpu_runtime_loadable() {
         return Err(t!("error.whisper_gpu_runtime_missing").to_string());
     }
 

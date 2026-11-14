@@ -1,4 +1,5 @@
 use std::collections::{HashMap, VecDeque};
+use std::path::PathBuf;
 use std::sync::mpsc::{self, Receiver, TryRecvError};
 use std::thread;
 use std::time::Duration;
@@ -8,6 +9,8 @@ use gpui_kit::component::progress::Progress;
 use gpui_kit::component::{ActiveTheme as _, Disableable as _};
 use gpui_kit::*;
 
+use crate::app::paths::data_dir;
+use crate::app::preferences::Preferences;
 use crate::app::widgets::{SECONDARY_TEXT_SIZE, TITLE_TEXT_SIZE, panel};
 use crate::setup_mode::components::{Component, Step};
 
@@ -35,6 +38,8 @@ pub struct SetupView {
     queue: VecDeque<Component>,
     is_installing: bool,
     is_welcome: bool,
+    install_dir: Option<PathBuf>,
+    folder_error: Option<String>,
 }
 
 impl SetupView {
@@ -49,6 +54,8 @@ impl SetupView {
             queue: VecDeque::new(),
             is_installing: false,
             is_welcome: true,
+            install_dir: Preferences::load().install_dir,
+            folder_error: None,
         }
     }
 
@@ -93,6 +100,87 @@ impl SetupView {
             })
         })
         .detach();
+    }
+
+    fn choose_install_dir(&mut self, cx: &mut Context<Self>) {
+        let picked = cx.prompt_for_paths(PathPromptOptions {
+            files: false,
+            directories: true,
+            multiple: false,
+            prompt: Some(t!("setup.choose_folder").to_string().into()),
+        });
+
+        cx.spawn(async move |this, cx| {
+            if let Ok(Ok(Some(mut folders))) = picked.await
+                && let Some(folder) = folders.pop()
+            {
+                let _ = this.update(cx, |view, cx| view.set_install_dir(Some(folder), cx));
+            }
+        })
+        .detach();
+    }
+
+    fn set_install_dir(&mut self, install_dir: Option<PathBuf>, cx: &mut Context<Self>) {
+        let mut preferences = Preferences::load();
+        preferences.install_dir = install_dir.clone();
+
+        self.folder_error = preferences.save().err();
+
+        if self.folder_error.is_none() {
+            self.install_dir = install_dir;
+            self.check_all(cx);
+        }
+
+        cx.notify();
+    }
+
+    fn render_install_folder(&self, cx: &mut Context<Self>) -> Div {
+        let theme = cx.theme();
+        let folder = self.install_dir.clone().unwrap_or_else(data_dir);
+
+        let description = div()
+            .flex()
+            .flex_col()
+            .gap_1()
+            .min_w_0()
+            .child(t!("setup.install_folder").to_string())
+            .child(div().text_color(theme.muted_foreground).child(folder.display().to_string()))
+            .children(
+                self.folder_error
+                    .clone()
+                    .map(|error| div().text_color(theme.danger).child(error)),
+            );
+
+        let default_button = self.install_dir.is_some().then(|| {
+            Button::new("default-folder")
+                .ghost()
+                .label(t!("setup.default_folder").to_string())
+                .disabled(self.is_installing)
+                .on_click(cx.listener(|this, _, _, cx| this.set_install_dir(None, cx)))
+        });
+
+        let choose_button = Button::new("choose-folder")
+            .ghost()
+            .label(t!("setup.choose_folder").to_string())
+            .disabled(self.is_installing)
+            .on_click(cx.listener(|this, _, _, cx| this.choose_install_dir(cx)));
+
+        div()
+            .flex()
+            .items_center()
+            .justify_between()
+            .gap_4()
+            .text_size(px(SECONDARY_TEXT_SIZE))
+            .child(description)
+            .child(
+                div()
+                    .flex()
+                    .items_center()
+                    .gap_2()
+                    .flex_shrink_0()
+                    .children(default_button)
+                    .child(choose_button),
+            )
     }
 
     fn needs_install(&self, component: Component) -> bool {
@@ -310,6 +398,8 @@ impl SetupView {
 
 impl Render for SetupView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let install_folder = self.render_install_folder(cx);
+
         let rows: Vec<Div> = Component::ALL
             .iter()
             .map(|component| self.render_row(*component, cx))
@@ -405,6 +495,7 @@ impl Render for SetupView {
             .flex_col()
             .gap_4()
             .children(self.is_welcome.then_some(welcome))
+            .child(install_folder)
             .child(component_list)
             .child(footer)
     }

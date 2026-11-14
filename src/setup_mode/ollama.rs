@@ -8,6 +8,7 @@ use std::time::{Duration, Instant};
 use serde_json::{Value, json};
 
 use crate::app::paths::path_setting;
+use crate::app::preferences::Preferences;
 use crate::app::process::background_command;
 
 const OLLAMA_URL: &str = "http://127.0.0.1:11434";
@@ -63,8 +64,14 @@ pub fn ensure_running() -> Result<(), String> {
 
     let binary = binary().ok_or_else(|| t!("error.ollama_not_installed").to_string())?;
 
-    let mut server = background_command(&binary)
-        .arg("serve")
+    let mut command = background_command(&binary);
+    command.arg("serve");
+
+    if let Some(install_dir) = Preferences::load().install_dir {
+        command.env("OLLAMA_MODELS", install_dir.join("ollama-models"));
+    }
+
+    let mut server = command
         .spawn()
         .map_err(|error| t!("error.ollama_start", error = error).to_string())?;
 
