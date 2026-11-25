@@ -3626,7 +3626,7 @@ dependencies = [
 
 [[package]]
 name = "kannichan"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cpal",
  "flate2",
