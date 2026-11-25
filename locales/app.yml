@@ -13,6 +13,34 @@ overlay.hint:
   en: "Subtitles appear over the screen chosen in Settings. Share that whole screen on Discord."
   es: "Los subtítulos aparecen sobre la pantalla elegida en Ajustes. Compártela entera en Discord."
   ja: "字幕は設定で選んだ画面の上に表示されます。Discordではその画面全体を共有してください。"
+update.available:
+  en: "KanniChan %{version} is available."
+  es: "KanniChan %{version} está disponible."
+  ja: "KanniChan %{version} が利用できます。"
+update.downloading:
+  en: "Downloading the update… %{percent}%"
+  es: "Descargando la actualización… %{percent}%"
+  ja: "アップデートをダウンロード中… %{percent}%"
+update.notes:
+  en: "What's new"
+  es: "Ver novedades"
+  ja: "更新内容"
+update.later:
+  en: "Later"
+  es: "Más tarde"
+  ja: "後で"
+update.install:
+  en: "Update and restart"
+  es: "Actualizar y reiniciar"
+  ja: "更新して再起動"
+error.update_unavailable:
+  en: "This update has no verified download for your version."
+  es: "Esta actualización no tiene una descarga verificada para tu versión."
+  ja: "このアップデートには、お使いの版の検証済みダウンロードがありません。"
+error.update_replace:
+  en: "Could not replace KanniChan with the new version: %{error}"
+  es: "No se pudo reemplazar KanniChan por la nueva versión: %{error}"
+  ja: "KanniChanを新しい版に置き換えられませんでした: %{error}"
 header.settings:
   en: "Settings"
   es: "Ajustes"

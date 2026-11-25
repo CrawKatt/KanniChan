@@ -10,6 +10,7 @@ mod settings;
 mod setup_mode;
 mod stream_mode;
 mod translate_mode;
+mod updater;
 mod voice;
 
 use gpui_kit::*;
@@ -18,6 +19,7 @@ i18n!("locales", fallback = "en");
 
 fn main() {
     app::paths::move_legacy_folders();
+    updater::release::remove_previous_version();
     app::locale::use_system_language();
     setup_mode::components::add_whisper_gpu_runtime_to_dll_path();
 

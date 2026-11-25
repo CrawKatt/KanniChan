@@ -33,6 +33,36 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+
+          notes() {
+            awk -v heading="## [$version]" '
+              index($0, "## ") == 1 { found = index($0, heading) == 1; next }
+              /^\[[^]]+\]: / { next }
+              found
+            ' "$1"
+          }
+
+          for changelog in CHANGELOG.md CHANGELOG.es.md CHANGELOG.ja.md; do
+            if ! notes "$changelog" | grep -q '[^[:space:]]'; then
+              echo "::error::$changelog has no section for $version"
+              exit 1
+            fi
+          done
+
+          {
+            notes CHANGELOG.md
+            printf '\n<details>\n<summary>Español</summary>\n\n'
+            notes CHANGELOG.es.md
+            printf '\n</details>\n\n<details>\n<summary>日本語</summary>\n\n'
+            notes CHANGELOG.ja.md
+            printf '\n</details>\n'
+          } > release-notes.md
+
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: Swatinem/rust-cache@v2
@@ -72,3 +102,4 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: kannichan-windows-${{ matrix.gpu }}.exe
+          body_path: release-notes.md

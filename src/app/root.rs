@@ -9,6 +9,8 @@ use crate::setup_mode::view::{SetupFinished, SetupView};
 use crate::setup_mode::{first_run, ollama};
 use crate::stream_mode::streamer_view::{Output, StreamerView};
 use crate::translate_mode::view::TranslateView;
+use crate::updater::banner::UpdateBanner;
+use crate::updater::release;
 use crate::voice::voicevox;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -26,6 +28,7 @@ pub struct Root {
     overlay_view: Entity<StreamerView>,
     settings_view: Entity<SettingsView>,
     setup_view: Entity<SetupView>,
+    update_banner: Entity<UpdateBanner>,
     screen: Screen,
 }
 
@@ -46,12 +49,16 @@ impl Root {
         cx.on_app_quit(|_, _| {
             ollama::stop_started_server();
             voicevox::stop_started_engine();
+            release::restart_if_updated();
 
             async {}
         })
         .detach();
 
         let setup_view = cx.new(|_| SetupView::new());
+        let update_banner = cx.new(UpdateBanner::new);
+
+        cx.observe(&update_banner, |_, _, cx| cx.notify()).detach();
 
         cx.subscribe_in(&setup_view, window, |root, _, _: &SetupFinished, window, cx| {
             root.finish_welcome(window, cx);
@@ -70,6 +77,7 @@ impl Root {
             overlay_view: cx.new(|_| StreamerView::new(Output::Screen)),
             settings_view: cx.new(|cx| SettingsView::new(setup_view.clone(), window, cx)),
             setup_view,
+            update_banner,
             screen,
         };
 
@@ -208,6 +216,14 @@ impl Render for Root {
             Screen::Settings => self.settings_view.clone().into_any_element(),
         };
 
-        page.child(self.render_header(cx)).child(content)
+        let update_banner = self
+            .update_banner
+            .read(cx)
+            .is_visible()
+            .then(|| self.update_banner.clone());
+
+        page.child(self.render_header(cx))
+            .children(update_banner)
+            .child(content)
     }
 }
