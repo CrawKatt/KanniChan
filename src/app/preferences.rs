@@ -18,6 +18,7 @@ pub struct Preferences {
     pub whisper: WhisperSettings,
     pub subtitle_style: SubtitleStyle,
     pub install_dir: Option<PathBuf>,
+    pub overlay_screen: Option<String>,
 }
 
 impl Default for Preferences {
@@ -28,6 +29,7 @@ impl Default for Preferences {
             whisper: WhisperSettings::default(),
             subtitle_style: SubtitleStyle::default(),
             install_dir: None,
+            overlay_screen: None,
         }
     }
 }
@@ -59,6 +61,7 @@ impl Preferences {
             whisper: WhisperSettings::from_json(&saved["whisper"]),
             subtitle_style: SubtitleStyle::from_json(&saved["subtitle_style"]),
             install_dir: saved["install_dir"].as_str().map(PathBuf::from),
+            overlay_screen: saved["overlay_screen"].as_str().map(String::from),
         }
     }
 
@@ -76,6 +79,7 @@ impl Preferences {
             "whisper": self.whisper.to_json(),
             "subtitle_style": self.subtitle_style.to_json(),
             "install_dir": self.install_dir,
+            "overlay_screen": self.overlay_screen,
         });
 
         fs::write(&path, saved.to_string())

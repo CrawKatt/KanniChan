@@ -3632,6 +3632,7 @@ dependencies = [
  "flate2",
  "gpui-kit",
  "lindera",
+ "raw-window-handle",
  "rodio",
  "rust-i18n",
  "serde_json",

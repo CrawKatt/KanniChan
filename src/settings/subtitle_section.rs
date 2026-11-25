@@ -1,5 +1,6 @@
 use gpui_kit::component::ActiveTheme as _;
 use gpui_kit::component::button::{Button, ButtonVariants as _};
+use gpui_kit::component::radio::{Radio, RadioGroup};
 use gpui_kit::component::color_picker::{ColorPicker, ColorPickerEvent, ColorPickerState};
 use gpui_kit::component::slider::{Slider, SliderEvent, SliderState};
 use gpui_kit::component::switch::Switch;
@@ -7,6 +8,7 @@ use gpui_kit::*;
 
 use crate::app::preferences::Preferences;
 use crate::app::widgets::SECONDARY_TEXT_SIZE;
+use crate::overlay_mode::screen_overlay::{screen_id, screen_label, screens};
 use crate::stream_mode::subtitle_style::{FONT_SIZE_RANGE, OUTLINE_WIDTH_RANGE, SubtitleStyle, rgb_from};
 
 const SLIDER_WIDTH: f32 = 220.;
@@ -18,12 +20,14 @@ pub struct SubtitleSection {
     text_color: Entity<ColorPickerState>,
     outline_color: Entity<ColorPickerState>,
     style: SubtitleStyle,
+    overlay_screen: Option<String>,
     error: Option<String>,
 }
 
 impl SubtitleSection {
     pub fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let style = Preferences::load().subtitle_style;
+        let preferences = Preferences::load();
+        let style = preferences.subtitle_style;
 
         let font_size = Self::slider(FONT_SIZE_RANGE, style.font_size, SubtitleStyle::set_font_size, window, cx);
         let outline_width = Self::slider(
@@ -44,6 +48,7 @@ impl SubtitleSection {
             text_color,
             outline_color,
             style,
+            overlay_screen: preferences.overlay_screen,
             error: None,
         }
     }
@@ -104,6 +109,58 @@ impl SubtitleSection {
         cx.notify();
     }
 
+    fn select_screen(&mut self, index: usize, cx: &mut Context<Self>) {
+        let screen = index
+            .checked_sub(1)
+            .and_then(|index| screens(cx).get(index).cloned())
+            .and_then(|screen| screen_id(screen.as_ref()));
+
+        let mut preferences = Preferences::load();
+        preferences.overlay_screen = screen.clone();
+
+        self.error = preferences.save().err();
+        self.overlay_screen = screen;
+        cx.notify();
+    }
+
+    fn render_screen_picker(&self, cx: &mut Context<Self>) -> Div {
+        let screens = screens(cx);
+
+        let selected = self
+            .overlay_screen
+            .as_ref()
+            .and_then(|id| {
+                screens
+                    .iter()
+                    .position(|screen| screen_id(screen.as_ref()).as_ref() == Some(id))
+            })
+            .map_or(0, |index| index + 1);
+
+        let options = std::iter::once(Radio::new("screen-auto").label(t!("subtitle.screen_auto").to_string())).chain(
+            screens.iter().enumerate().map(|(index, screen)| {
+                Radio::new(SharedString::from(format!("screen-{index}")))
+                    .label(screen_label(index + 1, screen.as_ref()))
+            }),
+        );
+
+        let picker = RadioGroup::vertical("overlay-screen")
+            .selected_index(Some(selected))
+            .children(options)
+            .on_change(cx.listener(|section, index: &usize, _, cx| section.select_screen(*index, cx)));
+
+        div()
+            .flex()
+            .flex_col()
+            .gap_2()
+            .child(t!("subtitle.screen").to_string())
+            .child(
+                div()
+                    .text_color(cx.theme().muted_foreground)
+                    .child(t!("subtitle.screen_help").to_string()),
+            )
+            .child(picker)
+    }
+
     fn set_furigana(&mut self, furigana: bool, cx: &mut Context<Self>) {
         self.style.furigana = furigana;
         self.save(cx);
@@ -153,6 +210,8 @@ impl Render for SubtitleSection {
         let muted = cx.theme().muted_foreground;
         let danger = cx.theme().danger;
 
+        let screen_picker = self.render_screen_picker(cx);
+
         let font_size = Self::render_slider_row(t!("subtitle.font_size").to_string(), &self.font_size, self.style.font_size);
         let outline_width = Self::render_slider_row(
             t!("subtitle.outline_width").to_string(),
@@ -200,6 +259,7 @@ impl Render for SubtitleSection {
             .child(text_color)
             .child(outline_color)
             .child(furigana)
+            .child(screen_picker)
             .child(footer)
             .children(self.error.clone().map(|error| div().text_color(danger).child(error)))
     }

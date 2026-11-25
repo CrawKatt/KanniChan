@@ -5,6 +5,14 @@ header.streamer:
   en: "Streamer mode"
   es: "Modo Streamer"
   ja: "配信モード"
+header.overlay:
+  en: "Overlay mode"
+  es: "Modo Overlay"
+  ja: "オーバーレイモード"
+overlay.hint:
+  en: "Subtitles appear over the screen chosen in Settings. Share that whole screen on Discord."
+  es: "Los subtítulos aparecen sobre la pantalla elegida en Ajustes. Compártela entera en Discord."
+  ja: "字幕は設定で選んだ画面の上に表示されます。Discordではその画面全体を共有してください。"
 header.settings:
   en: "Settings"
   es: "Ajustes"
@@ -69,6 +77,14 @@ streamer.empty:
   en: "Press “Start listening” and speak in Spanish or Japanese"
   es: "Pulsa «Empezar a escuchar» y habla en español o japonés"
   ja: "「聞き取り開始」を押して、スペイン語か日本語で話してください"
+error.screen_overlay:
+  en: "Could not show the subtitles on screen: %{error}"
+  es: "No se pudieron mostrar los subtítulos en pantalla: %{error}"
+  ja: "字幕を画面に表示できませんでした: %{error}"
+error.screen_overlay_wayland:
+  en: "Subtitles on screen need a Wayland session."
+  es: "Los subtítulos en pantalla necesitan una sesión Wayland."
+  ja: "画面上の字幕にはWaylandセッションが必要です。"
 streamer.copy_url:
   en: "Copy URL"
   es: "Copiar URL"
@@ -264,9 +280,9 @@ settings.voice_sample:
   ja: "試聴する"
 
 settings.subtitle_title:
-  en: "Streamer mode subtitles"
-  es: "Subtítulos del Modo Streamer"
-  ja: "配信モードの字幕"
+  en: "Streamer and Overlay mode subtitles"
+  es: "Subtítulos de los modos Streamer y Overlay"
+  ja: "配信・オーバーレイモードの字幕"
 subtitle.font_size:
   en: "Size"
   es: "Tamaño"
@@ -291,6 +307,22 @@ subtitle.applies_live:
   en: "Changes appear in OBS right away."
   es: "Los cambios se ven en OBS al momento."
   ja: "変更はすぐにOBSに反映されます。"
+subtitle.screen:
+  en: "Overlay mode screen"
+  es: "Pantalla del Modo Overlay"
+  ja: "オーバーレイモードの画面"
+subtitle.screen_help:
+  en: "Pick the screen you share. It applies the next time you start listening in Overlay mode."
+  es: "Elige la pantalla que compartes. Se aplica la próxima vez que empieces a escuchar en el Modo Overlay."
+  ja: "共有する画面を選んでください。次にオーバーレイモードで聞き取りを始めたときに反映されます。"
+subtitle.screen_auto:
+  en: "Automatic"
+  es: "Automática"
+  ja: "自動"
+subtitle.screen_option:
+  en: "Screen %{number} · %{width}×%{height} at (%{x}, %{y})"
+  es: "Pantalla %{number} · %{width}×%{height} en (%{x}, %{y})"
+  ja: "画面 %{number} · %{width}×%{height}（%{x}, %{y}）"
 subtitle.reset:
   en: "Reset defaults"
   es: "Restablecer valores"

@@ -7,7 +7,7 @@ use crate::settings::view::SettingsView;
 use crate::setup_mode::components::Component;
 use crate::setup_mode::view::{SetupFinished, SetupView};
 use crate::setup_mode::{first_run, ollama};
-use crate::stream_mode::streamer_view::StreamerView;
+use crate::stream_mode::streamer_view::{Output, StreamerView};
 use crate::translate_mode::view::TranslateView;
 use crate::voice::voicevox;
 
@@ -16,12 +16,14 @@ enum Screen {
     Welcome,
     Translate,
     Streamer,
+    Overlay,
     Settings,
 }
 
 pub struct Root {
     translate_view: Entity<TranslateView>,
     streamer_view: Entity<StreamerView>,
+    overlay_view: Entity<StreamerView>,
     settings_view: Entity<SettingsView>,
     setup_view: Entity<SetupView>,
     screen: Screen,
@@ -35,6 +37,11 @@ impl Root {
             Theme::sync_system_appearance(Some(window), cx);
         })
         .detach();
+
+        window.on_window_should_close(cx, |_, cx| {
+            cx.quit();
+            true
+        });
 
         cx.on_app_quit(|_, _| {
             ollama::stop_started_server();
@@ -59,7 +66,8 @@ impl Root {
 
         let root = Self {
             translate_view: cx.new(|cx| TranslateView::new(window, cx)),
-            streamer_view: cx.new(|_| StreamerView::new()),
+            streamer_view: cx.new(|_| StreamerView::new(Output::Obs)),
+            overlay_view: cx.new(|_| StreamerView::new(Output::Screen)),
             settings_view: cx.new(|cx| SettingsView::new(setup_view.clone(), window, cx)),
             setup_view,
             screen,
@@ -110,7 +118,7 @@ impl Root {
                 .translate_view
                 .update(cx, |view, cx| view.check_voicevox(cx)),
 
-            Screen::Welcome | Screen::Streamer => {}
+            Screen::Welcome | Screen::Streamer | Screen::Overlay => {}
         }
 
         if matches!(screen, Screen::Welcome | Screen::Settings) {
@@ -161,10 +169,11 @@ impl Root {
                 controls
                     .child(direction_controls)
                     .child(self.screen_button("streamer", t!("header.streamer").to_string(), Screen::Streamer, cx))
+                    .child(self.screen_button("overlay", t!("header.overlay").to_string(), Screen::Overlay, cx))
                     .child(self.screen_button("settings", t!("header.settings").to_string(), Screen::Settings, cx))
             }
 
-            Screen::Streamer | Screen::Settings => controls.child(self.screen_button(
+            Screen::Streamer | Screen::Overlay | Screen::Settings => controls.child(self.screen_button(
                 "back",
                 t!("header.back").to_string(),
                 Screen::Translate,
@@ -195,6 +204,7 @@ impl Render for Root {
             Screen::Welcome => self.setup_view.clone().into_any_element(),
             Screen::Translate => self.translate_view.clone().into_any_element(),
             Screen::Streamer => self.streamer_view.clone().into_any_element(),
+            Screen::Overlay => self.overlay_view.clone().into_any_element(),
             Screen::Settings => self.settings_view.clone().into_any_element(),
         };
 

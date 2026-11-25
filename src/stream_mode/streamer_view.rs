@@ -7,6 +7,7 @@ use gpui_kit::*;
 
 use crate::app::preferences::Preferences;
 use crate::stream_mode::overlay::Overlay;
+use crate::overlay_mode::screen_overlay::ScreenOverlay;
 use crate::stream_mode::streamer::*;
 use crate::app::widgets::{RESULT_TEXT_SIZE, SECONDARY_TEXT_SIZE, panel, render_text};
 
@@ -31,38 +32,42 @@ impl Status {
     }
 }
 
+#[derive(Clone, Copy, PartialEq)]
+pub enum Output {
+    Obs,
+    Screen,
+}
+
 pub struct StreamerView {
+    output: Output,
     streamer: Option<Streamer>,
     session: u64,
     status: Status,
     last_subtitle: Option<Subtitle>,
     error: Option<String>,
     overlay: Option<Overlay>,
+    screen_overlay: Option<WindowHandle<ScreenOverlay>>,
 }
 
 impl StreamerView {
-    pub fn new() -> Self {
+    pub fn new(output: Output) -> Self {
         Self {
+            output,
             streamer: None,
             session: 0,
             status: Status::Off,
             last_subtitle: None,
             error: None,
             overlay: None,
+            screen_overlay: None,
         }
     }
 
     fn start_listening(&mut self, cx: &mut Context<Self>) {
-        if self.overlay.is_none() {
-            match Overlay::start() {
-                Ok(overlay) => self.overlay = Some(overlay),
-
-                Err(error) => {
-                    self.error = Some(error);
-                    cx.notify();
-                    return;
-                }
-            }
+        if let Err(error) = self.open_output(cx) {
+            self.error = Some(error);
+            cx.notify();
+            return;
         }
 
         let (sender, events) = mpsc::channel();
@@ -79,7 +84,30 @@ impl StreamerView {
     fn stop_listening(&mut self, cx: &mut Context<Self>) {
         self.streamer = None;
         self.status = Status::Off;
+        self.close_screen_overlay(cx);
         cx.notify();
+    }
+
+    fn open_output(&mut self, cx: &mut Context<Self>) -> Result<(), String> {
+        match self.output {
+            Output::Obs if self.overlay.is_none() => {
+                self.overlay = Some(Overlay::start()?);
+            }
+
+            Output::Screen if self.screen_overlay.is_none() => {
+                self.screen_overlay = Some(ScreenOverlay::open(cx)?);
+            }
+
+            Output::Obs | Output::Screen => {}
+        }
+
+        Ok(())
+    }
+
+    fn close_screen_overlay(&mut self, cx: &mut Context<Self>) {
+        if let Some(screen_overlay) = self.screen_overlay.take() {
+            let _ = screen_overlay.update(cx, |_, window, _| window.remove_window());
+        }
     }
 
     fn receive_events(
@@ -112,7 +140,7 @@ impl StreamerView {
                 let still_open = this.update(cx, |view, cx| {
                     if view.session == session && view.streamer.is_some() {
                         for event in received {
-                            view.handle_event(event);
+                            view.handle_event(event, cx);
                         }
 
                         cx.notify();
@@ -127,7 +155,7 @@ impl StreamerView {
         .detach();
     }
 
-    fn handle_event(&mut self, event: StreamerEvent) {
+    fn handle_event(&mut self, event: StreamerEvent, cx: &mut Context<Self>) {
         match event {
             StreamerEvent::Listening => self.status = Status::Listening,
 
@@ -138,6 +166,11 @@ impl StreamerView {
                     overlay.show(&subtitle);
                 }
 
+                if let Some(screen_overlay) = self.screen_overlay {
+                    let shown = subtitle.clone();
+                    let _ = screen_overlay.update(cx, |screen_overlay, _, cx| screen_overlay.show(shown, cx));
+                }
+
                 self.last_subtitle = Some(subtitle);
             }
 
@@ -145,6 +178,7 @@ impl StreamerView {
                 self.error = Some(error);
                 self.streamer = None;
                 self.status = Status::Off;
+                self.close_screen_overlay(cx);
             }
         }
     }
@@ -194,15 +228,29 @@ impl StreamerView {
                 .child(error)
         });
 
-        let overlay_url = div()
-            .text_size(px(SECONDARY_TEXT_SIZE))
-            .text_color(theme.muted_foreground)
-            .child(format!("OBS: {}", Overlay::url()));
+        let destination = match self.output {
+            Output::Obs => div()
+                .flex()
+                .items_center()
+                .gap_3()
+                .child(
+                    div()
+                        .text_size(px(SECONDARY_TEXT_SIZE))
+                        .text_color(theme.muted_foreground)
+                        .child(format!("OBS: {}", Overlay::url())),
+                )
+                .child(
+                    Button::new("copy-url")
+                        .ghost()
+                        .label(t!("streamer.copy_url").to_string())
+                        .on_click(|_, _, cx| cx.write_to_clipboard(ClipboardItem::new_string(Overlay::url()))),
+                ),
 
-        let copy_button = Button::new("copy-url")
-            .ghost()
-            .label(t!("streamer.copy_url").to_string())
-            .on_click(|_, _, cx| cx.write_to_clipboard(ClipboardItem::new_string(Overlay::url())));
+            Output::Screen => div()
+                .text_size(px(SECONDARY_TEXT_SIZE))
+                .text_color(theme.muted_foreground)
+                .child(t!("overlay.hint").to_string()),
+        };
 
         let listen_button = if self.streamer.is_some() {
             Button::new("listen")
@@ -228,8 +276,7 @@ impl StreamerView {
             .flex()
             .items_center()
             .gap_3()
-            .child(overlay_url)
-            .child(copy_button)
+            .child(destination)
             .child(listen_button);
 
         div()

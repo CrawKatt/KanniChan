@@ -31,6 +31,7 @@ const KNOWN_HALLUCINATIONS: &[&str] = &[
     "Gracias por ver",
 ];
 
+#[derive(Clone)]
 pub struct Subtitle {
     pub original: Translation,
     pub translation: Result<Translation, String>,

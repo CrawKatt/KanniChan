@@ -5,6 +5,7 @@ extern crate rust_i18n;
 
 mod app;
 mod language;
+mod overlay_mode;
 mod settings;
 mod setup_mode;
 mod stream_mode;
