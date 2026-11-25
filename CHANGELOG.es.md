@@ -6,7 +6,7 @@ Todos los cambios importantes de KanniChan se anotan aquí. El formato sigue
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones siguen
 [Semantic Versioning](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [0.3.0] - 2026-11-15
 
 ### Añadido
 
